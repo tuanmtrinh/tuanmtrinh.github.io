@@ -1,5 +1,4 @@
 name: Deploy Vite site to GitHub Pages
-
 on:
   push:
     branches: [ "main" ]
@@ -18,35 +17,23 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
-
       - name: Install dependencies
         run: |
-          if [ -f package-lock.json ]; then
-            npm ci
-          else
-            npm install
-          fi
-
+          if [ -f package-lock.json ]; then npm ci; else npm install; fi
       - name: Build
         run: npm run build
-
       - name: SPA 404 fallback
         run: |
           cp dist/index.html dist/404.html || true
           touch dist/.nojekyll
-
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./dist
-
   deploy:
     needs: build
     runs-on: ubuntu-latest
